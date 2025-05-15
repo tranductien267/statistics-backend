@@ -27,9 +27,6 @@ mongoose.connect(process.env.MONGODB_URI)
     .then(() => console.log('MongoDB connected'))
     .catch((err) => console.log('MongoDB connection error:', err));
 // API login
-app.get('/', (req, res) => {
-  res.send('Hello Railway!');
-});
 app.post('/api/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log('login request');
     const { usercode, password } = req.body;
