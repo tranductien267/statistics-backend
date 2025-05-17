@@ -140,6 +140,16 @@ app.get('/api/users', async (req: Request, res: Response) => {
     return res.status(500).json({ message: "Server error" }) as any;
   }
 });
+app.get('/api/test', async (req: Request, res: Response) => {
+  console.log('users request')
+  try {
+    return   res.json({ message: 'API test thành công!' });
+
+  } catch (error) {
+    console.error("Error fetching timesheets:", error);
+    return res.status(500).json({ message: "Server error" }) as any;
+  }
+});
 app.get('/api/timesheetByUser', async (req: Request, res: Response) => {
   console.log('timesheet request')
   try {
