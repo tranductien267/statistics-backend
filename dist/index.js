@@ -45,6 +45,8 @@ app.post('/api/login', (req, res) => __awaiter(void 0, void 0, void 0, function*
         if (user.password !== password) {
             return res.status(400).json({ message: 'Invalid password' });
         }
+        user.password = "*********";
+        console.log("user new : " + user);
         res.status(200).json({ user: user });
     }
     catch (error) {
@@ -121,6 +123,59 @@ app.get('/api/timesheet', (req, res) => __awaiter(void 0, void 0, void 0, functi
             page: Number(page),
             limit: Number(limit),
         });
+    }
+    catch (error) {
+        console.error("Error fetching timesheets:", error);
+        return res.status(500).json({ message: "Server error" });
+    }
+}));
+app.get('/api/users', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log('users request');
+    try {
+        // Lọc theo userId nếu có
+        const users = yield User_1.default.find();
+        console.log(users);
+        return res.status(200).json(users);
+    }
+    catch (error) {
+        console.error("Error fetching users:", error);
+        return res.status(500).json({ message: "Server error" });
+    }
+}));
+app.get('/api/test', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log('users request');
+    try {
+        return res.json({ message: 'API test thành công!' });
+    }
+    catch (error) {
+        console.error("Error fetching timesheets:", error);
+        return res.status(500).json({ message: "Server error" });
+    }
+}));
+app.get('/api/timesheetByUser', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log('timesheet request');
+    try {
+        const { userId, month, year } = req.query;
+        console.log('condition: ' + userId + "-" + month + "-" + year);
+        const filter = {};
+        // Lọc theo userId nếu có
+        if (!userId || !month || !year) {
+            return res.status(400).json({ error: "Bad request" });
+        }
+        const user = yield User_1.default.findOne({ _id: userId });
+        const startDate = new Date(Number(year), Number(month) - 1, 1);
+        const endDate = new Date(Number(year), Number(month), 0, 23, 59, 59);
+        // Lọc theo ngày nếu có
+        filter.userId = user._id;
+        filter.date = {
+            $gte: startDate,
+            $lte: endDate,
+        };
+        // Lấy dữ liệu chấm công từ MongoDB
+        const timesheets = yield Record_1.default.find(filter);
+        // Trả về kết quả
+        console.log(timesheets[0]);
+        return res.status(200).json(timesheets);
     }
     catch (error) {
         console.error("Error fetching timesheets:", error);
