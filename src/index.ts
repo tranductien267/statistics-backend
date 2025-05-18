@@ -181,6 +181,23 @@ app.get('/api/timesheetByUser', async (req: Request, res: Response) => {
     return res.status(500).json({ message: "Server error" }) as any;
   }
 });
+app.post("/api/updateTimesheet", async (req, res) => {
+  const updatedData = req.body;
+
+  try {
+    for (const item of updatedData) {
+      await RecordSchema.updateOne(
+        { _id:item._id},
+        { $set: item },
+        { upsert: true }
+      );
+    }
+    res.status(200).send("Cập nhật thành công");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Lỗi server");
+  }
+});
 
 // Start server
 const PORT = process.env.PORT || 5000;
